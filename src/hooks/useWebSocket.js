@@ -1,27 +1,24 @@
 import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 
-const SOCKET_URL =  new WebSocket("wss://drone-map-backend-2.onrender.com");
-
-
 export default function useWebSocket(onNewDroneData) {
   const socketRef = useRef(null);
 
-  useEffect(() => { 
-    socketRef.current = io(SOCKET_URL);
+  useEffect(() => {
+   
+    socketRef.current = io("https://drone-map-backend-2.onrender.com");
 
     socketRef.current.on('connect', () => {
-      console.log('🔌 Connected to WebSocket server');
+      console.log('🔌 Connected to Socket.IO server');
     });
 
     socketRef.current.on('message', (data) => {
-      
       console.log('📡 New drone data:', data);
-      onNewDroneData(data);     
+      onNewDroneData(data);
     });
 
     socketRef.current.on('disconnect', () => {
-      console.log('❌ Disconnected from WebSocket server');
+      console.log('❌ Disconnected from Socket.IO server');
     });
 
     return () => {
