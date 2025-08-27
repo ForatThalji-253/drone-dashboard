@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 
-const SOCKET_URL =  new WebSocket("wss://drone-map-backend.onrender.com");
+const SOCKET_URL =  new WebSocket("wss://drone-map-backend-1.onrender.com");
 
 
 export default function useWebSocket(onNewDroneData) {
