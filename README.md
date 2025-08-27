@@ -28,23 +28,3 @@ The front-end communicates with a provided backend via **WebSockets** and displa
 ## Live Demo
  - https://drone-dashboard-arxf.vercel.app/ 
 
-
-
-## Known Issues  
-
-### Drone Path Persistence  
-
-- **Description:**  
-  Currently, drones appear correctly on the map, but their **path history is not fully implemented**.  
-
-- **Reason:**  
-  The backend generates a **new random serial ID** for each drone update (using `makeID()` on every tick).  
-  As a result, the frontend cannot reliably associate new positions with previously received drones, since every update looks like a completely new drone.  
-
-- **Impact:**  
-  This prevents storing and rendering the **full trajectory (LineString)** of each drone over time.  
-  Instead, only the **latest position** is shown on the map.  
-
-- **Possible Solution (if backend changes were allowed):**  
-  - Ensure each drone has a **consistent unique ID** across all updates.  
-  - Use this ID in the frontend to keep track of all received coordinates and render the **full path history**.  

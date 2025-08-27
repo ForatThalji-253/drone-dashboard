@@ -6,7 +6,7 @@ import useDroneStore from "../store/droneStore";
 mapboxgl.accessToken =
   "pk.eyJ1IjoidGhhbGppZm9yYXQiLCJhIjoiY21lb3l5d3pnMGpoeTJ3cXZqeHpnejhnMiJ9.vVJfOVHNbMcAjon9q-p0xQ";
 
-export default function DroneMap({ drones ,onMapReady }) {
+export default function DroneMap({ drones, onMapReady }) {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef({});
@@ -23,9 +23,9 @@ export default function DroneMap({ drones ,onMapReady }) {
       zoom: 10,
     });
 
-      mapRef.current.on("load", () => {
-        if (onMapReady) onMapReady(); 
-      });
+    mapRef.current.on("load", () => {
+      if (onMapReady) onMapReady();
+    });
   }, [onMapReady]);
 
   useEffect(() => {
@@ -38,15 +38,20 @@ export default function DroneMap({ drones ,onMapReady }) {
     }
 
     function updateDrones() {
-      Object.entries(drones).forEach(([serial, drone]) => {
+      Object.values(drones).forEach((drone) => {
+      
+        const regId = drone.info.properties.registration;
         const coords = drone.path[drone.path.length - 1];
         const [lng, lat] = coords;
-        const isAllowed = serial.startsWith("B");
+        const reg = drone.info.properties.registration;
+        const isAllowed = reg.split('-')[1].startsWith('B');
+
         const yaw = drone.info.properties.yaw || 0;
 
-        if (markersRef.current[serial]) {
-          markersRef.current[serial].setLngLat([lng, lat]);
-          const pointer = markersRef.current[serial]
+        // ====== Update Marker ======
+        if (markersRef.current[regId]) {
+          markersRef.current[regId].setLngLat([lng, lat]);
+          const pointer = markersRef.current[regId]
             .getElement()
             .querySelector(".arrow-pointer");
           if (pointer) pointer.style.transform = `rotate(${yaw}deg)`;
@@ -55,7 +60,6 @@ export default function DroneMap({ drones ,onMapReady }) {
           const el = document.createElement("div");
           el.className = "relative w-6 h-6 cursor-pointer";
 
-       
           const circle = document.createElement("div");
           circle.className = `absolute top-[2px] left-[2px] w-[22px] h-[22px] rounded-full shadow-md overflow-hidden ${
             isAllowed ? "bg-green-500" : "bg-red-600"
@@ -137,18 +141,18 @@ export default function DroneMap({ drones ,onMapReady }) {
             .setPopup(popup)
             .addTo(mapRef.current);
 
-          el.addEventListener("click", () => setSelectedDrone(serial));
-          markersRef.current[serial] = marker;
+          el.addEventListener("click", () => setSelectedDrone(regId));
+          markersRef.current[regId] = marker;
         }
 
         // ====== Paths ======
-        if (pathsRef.current[serial] && mapRef.current.getSource(`line-${serial}`)) {
-          mapRef.current.getSource(`line-${serial}`).setData({
+        if (pathsRef.current[regId] && mapRef.current.getSource(`line-${regId}`)) {
+          mapRef.current.getSource(`line-${regId}`).setData({
             type: "Feature",
             geometry: { type: "LineString", coordinates: drone.path },
           });
-        } else if (!pathsRef.current[serial]) {
-          mapRef.current.addSource(`line-${serial}`, {
+        } else if (!pathsRef.current[regId]) {
+          mapRef.current.addSource(`line-${regId}`, {
             type: "geojson",
             data: {
               type: "Feature",
@@ -157,9 +161,9 @@ export default function DroneMap({ drones ,onMapReady }) {
           });
 
           mapRef.current.addLayer({
-            id: `line-${serial}`,
+            id: `line-${regId}`,
             type: "line",
-            source: `line-${serial}`,
+            source: `line-${regId}`,
             layout: { "line-join": "round", "line-cap": "round" },
             paint: {
               "line-color": isAllowed ? "green" : "red",
@@ -167,7 +171,7 @@ export default function DroneMap({ drones ,onMapReady }) {
             },
           });
 
-          pathsRef.current[serial] = true;
+          pathsRef.current[regId] = true;
         }
       });
     }

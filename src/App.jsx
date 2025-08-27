@@ -18,32 +18,33 @@ function App() {
   const [dataReady, setDataReady] = useState(false);
 
   
-  const handleNewDroneData = useCallback((data) => {
-    setDataReady(true);  
-    setDrones((prev) => {
-      const updated = { ...prev };
+const handleNewDroneData = useCallback((data) => {
+  setDataReady(true);
+  setDrones((prev) => {
+    const updated = { ...prev };
 
-      data.features.forEach((drone) => {
-        const serial = drone.properties.serial;
-        const coords = drone.geometry.coordinates;
+    data.features.forEach((drone) => {
+      const regId = drone.properties.registration; 
+      const coords = drone.geometry.coordinates;
 
-        if (updated[serial]) {
-          updated[serial] = {
-            ...updated[serial],
-            info: drone,
-            path: [...updated[serial].path, coords],
-          };
-        } else {
-          updated[serial] = {
-            info: drone,
-            path: [coords],
-          };
-        }
-      });
-
-      return updated;
+      if (updated[regId]) {
+        updated[regId] = {
+          ...updated[regId],
+          info: drone,
+          path: [...updated[regId].path, coords], 
+        };
+      } else {
+        updated[regId] = {
+          info: drone,
+          path: [coords],
+        };
+      }
     });
-  }, []);
+
+    return updated;
+  });
+}, []);
+
 
   useWebSocket(handleNewDroneData);
 

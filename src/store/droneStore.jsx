@@ -3,7 +3,7 @@ import { create } from "zustand";
 
 const useDroneStore = create((set) => ({
   selectedDrone: null,
-  setSelectedDrone: (serial) => set({ selectedDrone: serial }),
+  setSelectedDrone: (regId) => set({ selectedDrone: regId }),
 }));
 
 export default useDroneStore;

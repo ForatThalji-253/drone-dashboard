@@ -53,7 +53,10 @@ export default function DroneList({ drones }) {
 
             <ul>
               {droneList.map(([serial, drone]) => {
-                const isAllowed = serial.startsWith("B");
+                const reg = drone.info.properties.registration;
+                 
+                const isAllowed = reg.split('-')[1].startsWith('B');
+
                 const { registration, pilot, organization, Name } =
                   drone.info.properties;
                 const isSelected = selectedDrone === serial;
@@ -81,11 +84,11 @@ export default function DroneList({ drones }) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 md:gap-x-4 gap-y-1">
                       <div className="text-xs text-gray-300 mb-2">
                         <p>Serial #</p>
-                        <p className="truncate">{serial}</p>
+                        <p className="truncate"> {drone.info.properties.serial}</p>
                       </div>
                       <div className="text-xs text-gray-300 mb-2">
                         <p>Registration #</p>
-                        <p className="truncate">{registration}</p>
+                        <p className="truncate">{reg}</p>
                       </div>
                       <div className="text-xs text-gray-300 mb-2">
                         <p>Pilot</p>
