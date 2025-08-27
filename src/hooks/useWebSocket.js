@@ -7,7 +7,7 @@ const SOCKET_URL =  new WebSocket("wss://drone-map-backend-1.onrender.com");
 export default function useWebSocket(onNewDroneData) {
   const socketRef = useRef(null);
 
-  useEffect(() => {
+  useEffect(() => { 
     socketRef.current = io(SOCKET_URL);
 
     socketRef.current.on('connect', () => {
